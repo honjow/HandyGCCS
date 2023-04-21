@@ -348,22 +348,34 @@ def make_controller():
     #         version=0x110
     #         )
     
+    # Xbox One S Controller
     ui_device = UInput(
             CONTROLLER_EVENTS,
-            name='Handheld Controller',
+            name='V Microsoft X-Box One S pad',
             bustype=0x3,
             vendor=0x045e,
             product=0x02ea,
             version=0x0301
             )
     
+    # Sony Interactive Entertainment Wireless Controller
     # ui_device = UInput(
     #         CONTROLLER_EVENTS,
-    #         name='Sony Interactive Entertainment Wireless Controller',
+    #         name='V Sony Interactive Entertainment Wireless Controller',
     #         bustype=0x3,
-    #         vendor=0x045e,
-    #         product=0x028e,
-    #         version=0x8111
+    #         vendor=0x054c,
+    #         product=0x05c4,
+    #         version=0x0111
+    #         )
+
+    #  Nintendo Co., Ltd. Pro Controller
+    # ui_device = UInput(
+    #         CONTROLLER_EVENTS,
+    #         name='Handheld Controller',
+    #         bustype=0x3,
+    #         vendor=0x057e,
+    #         product=0x2009,
+    #         version=0x111
     #         )
 
 def get_controller():
