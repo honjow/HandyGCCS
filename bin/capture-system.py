@@ -34,6 +34,7 @@ def capture_system():
     # Identify system input event devices.
     devices = [InputDevice(path) for path in list_devices()]
     for device in devices:
+        print (device)
         
         # Xbox 360 Controller
         if device.name in ['Microsoft X-Box 360 pad', 'Generic X-Box pad', 'OneXPlayer Gamepad',]:

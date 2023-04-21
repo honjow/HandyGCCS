@@ -339,14 +339,32 @@ def make_controller():
     global ui_device
 
     # Create the virtual controller.
+    # ui_device = UInput(
+    #         CONTROLLER_EVENTS,
+    #         name='Handheld Controller',
+    #         bustype=0x3,
+    #         vendor=0x045e,
+    #         product=0x028e,
+    #         version=0x110
+    #         )
+    
     ui_device = UInput(
             CONTROLLER_EVENTS,
             name='Handheld Controller',
             bustype=0x3,
             vendor=0x045e,
-            product=0x028e,
-            version=0x110
+            product=0x02ea,
+            version=0x0301
             )
+    
+    # ui_device = UInput(
+    #         CONTROLLER_EVENTS,
+    #         name='Sony Interactive Entertainment Wireless Controller',
+    #         bustype=0x3,
+    #         vendor=0x045e,
+    #         product=0x028e,
+    #         version=0x8111
+    #         )
 
 def get_controller():
     global CAPTURE_CONTROLLER
@@ -699,15 +717,15 @@ async def capture_keyboard_events():
                                 # LC | Default: Screenshot / Launch Chimera
                                 if button_on == 102 and event_queue == []:
                                     if HAS_CHIMERA_LAUNCHER:
-                                        event_queue.append(button7)
+                                        await do_press_button(button7)
                                     else:
-                                        event_queue.append(button1)
+                                        await do_press_button(button1)
                                 # RC | Default: OSK
                                 elif button_on == 103 and event_queue == []:
-                                    event_queue.append(button4)
+                                    await do_press_button(button4)
                                 # AYA Space | Default: MODE
                                 elif button_on == 104 and event_queue == []:
-                                    event_queue.append(button5)
+                                    await do_press_button(button5)
                             elif active == [] and seed_event.code in [97, 125] and button_on == 0 and event_queue != []:
                                 if button7 in event_queue:
                                     event_queue.remove(button7)
@@ -724,6 +742,10 @@ async def capture_keyboard_events():
                                 event_queue.append(button2)
                             elif active == [] and seed_event.code in [32, 125] and button_on == 0 and button2 in event_queue:
                                 this_button = button2
+
+                            if active == [] and button_on == 0 and event_queue != []:
+                                if this_button is not None and len(this_button) == 1:
+                                    await do_unpress_button(this_button)                                
 
                             # Small Button + big button | Default: Toggle Gyro
                             if active == [32, 97, 125] and button_on == 1 and button3 not in event_queue:
@@ -778,19 +800,19 @@ async def capture_keyboard_events():
                                     await do_unpress_button(this_button)
 
                             # Small Button + big button | Default: Toggle Gyro
-                            # if active == [32, 29, 125] and button_on == 1 and button3 not in event_queue:
-                            #     if button2 in event_queue:
-                            #         event_queue.remove(button2)
-                            #     event_queue.append(button3)
-                            # elif active == [] and seed_event.code in [32, 29, 125] and button_on == 0 and button3 in event_queue:
-                            #     event_queue.remove(button3)
-                            #     gyro_enabled = not gyro_enabled
-                            #     if gyro_enabled:
-                            #         await do_rumble(0, 250, 1000, 0)
-                            #     else:
-                            #         await do_rumble(0, 100, 1000, 0)
-                            #         await asyncio.sleep(FF_DELAY)
-                            #         await do_rumble(0, 100, 1000, 0)                                    
+                            if active == [32, 29, 125] and button_on == 1 and button3 not in event_queue:
+                                if button2 in event_queue:
+                                    event_queue.remove(button2)
+                                event_queue.append(button3)
+                            elif active == [] and seed_event.code in [32, 29, 125] and button_on == 0 and button3 in event_queue:
+                                event_queue.remove(button3)
+                                gyro_enabled = not gyro_enabled
+                                if gyro_enabled:
+                                    await do_rumble(0, 250, 1000, 0)
+                                else:
+                                    await do_rumble(0, 100, 1000, 0)
+                                    await asyncio.sleep(FF_DELAY)
+                                    await do_rumble(0, 100, 1000, 0)                                    
 
                         case "OXP_GEN1" | "OXP_GEN2":
                             # BUTTON 1 (Possible dangerous fan activity!) Short press orange + |||||
