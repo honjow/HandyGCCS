@@ -16,6 +16,7 @@ import signal
 import subprocess
 import sys
 import warnings
+import platform
 
 from constants import CONTROLLER_EVENTS, DETECT_DELAY, EVENT_ALT_TAB, EVENT_ESC, EVENT_MODE, EVENT_KILL, EVENT_OSK, EVENT_QAM, EVENT_SCR, FF_DELAY, HIDE_PATH, JOY_MAX, JOY_MIN
 from evdev import InputDevice, InputEvent, UInput, ecodes as e, list_devices, ff
@@ -594,6 +595,14 @@ async def capture_keyboard_events():
     button6 = ["RyzenAdj Toggle"]
     button7 = ["Open Chimera"]
     last_button = None
+
+    kernel_version = platform.release()
+    logger.info(f"Kernel Version:{kernel_version}")
+    major, minor, _ = kernel_version.split(".", maxsplit=2)
+    version_num = float(".".join([major, minor]))
+    if system_type == 'AYA_GEN4' and version_num >= 6.0:
+        logger.info("Kernel version >= 6.0. disabling keyboard device.")
+        return
 
     # Capture keyboard events and translate them to mapped events.
     while running:
@@ -1381,6 +1390,7 @@ def restore_keyboard():
 def restore_controller():
     # Both devices threads will attempt this, so ignore if they have been moved.
     try:
+        logger.info(f"Moving {HIDE_PATH / controller_event} to {controller_path}")
         move(str(HIDE_PATH / controller_event), controller_path)
     except FileNotFoundError:
         pass
