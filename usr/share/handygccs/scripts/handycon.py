@@ -596,13 +596,13 @@ async def capture_keyboard_events():
     button7 = ["Open Chimera"]
     last_button = None
 
-    kernel_version = platform.release()
-    logger.info(f"Kernel Version:{kernel_version}")
-    major, minor, _ = kernel_version.split(".", maxsplit=2)
-    version_num = float(".".join([major, minor]))
-    if system_type == 'AYA_GEN4' and version_num >= 6.0:
-        logger.info("Kernel version >= 6.0. disabling keyboard device.")
-        return
+    # kernel_version = platform.release()
+    # logger.info(f"Kernel Version:{kernel_version}")
+    # major, minor, _ = kernel_version.split(".", maxsplit=2)
+    # version_num = float(".".join([major, minor]))
+    #if system_type == 'AYA_GEN4' and version_num >= 6.0:
+    #logger.info("Kernel version >= 6.0. disabling keyboard device.")
+    #    return
 
     # Capture keyboard events and translate them to mapped events.
     while running:
@@ -1195,16 +1195,27 @@ async def capture_power_events():
                     active_keys = keyboard_device.active_keys()
                     if event.type == e.EV_KEY and event.code == 116: # KEY_POWER
                         if event.value == 0:
+                            logger.info("active_keys = " + str(active_keys))
                             if active_keys == [125]:
                                 # For DeckUI Sessions
                                 shutdown = True
                                 steam_ifrunning_deckui("steam://longpowerpress")
+                                logger.info("Shutting down...")
                             else:
+
                                 # For DeckUI Sessions
-                                is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
+                                is_deckui = False
+                                logger.info("Suspending...")
+                                # is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
+                                # os.system('systemctl suspend-then-hibernate')
+                                # sleep 1 second to allow Steam to process the command
+                                # await asyncio.sleep(1)
+                                os.system('systemctl suspend-then-hibernate')
                                 if not is_deckui:
+                                    pass
                                     # For BPM and Desktop sessions
-                                    os.system('systemctl suspend')
+                                    #os.system('systemctl suspend')
+                                    # os.system('systemctl suspend-then-hibernate')
 
                     if active_keys == [125]:
                         await do_rumble(0, 150, 1000, 0)
