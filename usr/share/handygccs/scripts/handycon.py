@@ -340,13 +340,22 @@ def make_controller():
     global ui_device
 
     # Create the virtual controller.
+    # ui_device = UInput(
+    #         CONTROLLER_EVENTS,
+    #         name='Handheld Controller',
+    #         bustype=0x3,
+    #         vendor=0x045e,
+    #         product=0x028e,
+    #         version=0x110
+    #         )
+    # Xbox One S Controller
     ui_device = UInput(
             CONTROLLER_EVENTS,
-            name='Handheld Controller',
+            name='V Microsoft X-Box One S pad',
             bustype=0x3,
             vendor=0x045e,
-            product=0x028e,
-            version=0x110
+            product=0x02ea,
+            version=0x0301
             )
 
 def get_controller():
@@ -636,9 +645,9 @@ async def capture_keyboard_events():
                             # BUTTON 1 (Default: Screenshot/Launch Chiumera) LC Button
                             if active == [87, 97, 125] and button_on == 1 and button1 not in event_queue and shutdown == False:
                                 if HAS_CHIMERA_LAUNCHER:
-                                    event_queue.append(button7)
+                                    do_press_button(button7)
                                 else:
-                                    event_queue.append(button1)
+                                    do_press_button(button1)
                             elif active == [] and seed_event.code in [87, 97, 125] and button_on == 0 and button1 in event_queue:
                                 this_button = button1
                             elif active == [] and seed_event.code in [87, 97, 125] and button_on == 0 and button7 in event_queue:
@@ -647,14 +656,14 @@ async def capture_keyboard_events():
 
                             # BUTTON 2 (Default: QAM) Small button
                             if active in [[40, 133], [32, 125]] and button_on == 1 and button2 not in event_queue:
-                                event_queue.append(button2)
+                                do_press_button(button2)
                             elif active == [] and seed_event.code in [32, 40, 125, 133] and button_on == 0 and button2 in event_queue:
                                 this_button = button2
                                 await do_rumble(0, 150, 1000, 0)
 
                             # BUTTON 3 (Default: Toggle Gyro) RC + LC Buttons
                             if active == [68, 87, 97, 125] and button_on == 1 and button3 not in event_queue and gyro_device:
-                                event_queue.append(button3)
+                                do_press_button(button3)
                                 if button1 in event_queue:
                                     event_queue.remove(button1)
                                 if button4 in event_queue:
@@ -672,19 +681,19 @@ async def capture_keyboard_events():
 
                             # BUTTON 4 (Default: OSK) RC Button
                             if active == [68, 97, 125] and button_on == 1 and button4 not in event_queue:
-                                event_queue.append(button4)
+                                do_press_button(button4)
                             elif active == [] and seed_event.code in [68, 97, 125] and button_on == 0 and button4 in event_queue:
                                 this_button = button4
 
                             # BUTTON 5 (Default: MODE) Big button
                             if active in [[96, 105, 133], [88, 97, 125]] and button_on == 1 and button5 not in event_queue:
-                                event_queue.append(button5)
+                                do_press_button(button5)
                             elif active == [] and seed_event.code in [88, 96, 97, 105, 125, 133] and button_on == 0 and button5 in event_queue:
                                 this_button = button5
 
                             # BUTTON 6 (Default: Toggle RyzenAdj) Big button + Small Button
                             if active == [32, 88, 97, 125] and button_on == 1 and button6 not in event_queue:
-                                event_queue.append(button6)
+                                do_press_button(button6)
                             elif active == [] and seed_event.code in [32, 88, 97, 125] and button_on == 0 and button6 in event_queue:
                                 event_queue.remove(button6)
                                 await toggle_performance()
@@ -693,6 +702,11 @@ async def capture_keyboard_events():
                             elif active == [] and seed_event.code == 125 and button_on == 0 and  event_queue == [] and shutdown == True:
                                 shutdown = False
 
+                            # Unpress single button
+                            if active == [] and button_on == 0 and event_queue != []:
+                                if this_button is not None and len(this_button) == 1:
+                                    await do_unpress_button(this_button)
+
                         case "AYA_GEN3":
                             # This device class uses the same active events with different values for AYA SPACE, LC, and RC.
                             if active == [97, 125]:
@@ -700,15 +714,15 @@ async def capture_keyboard_events():
                                 # LC | Default: Screenshot / Launch Chimera
                                 if button_on == 102 and event_queue == []:
                                     if HAS_CHIMERA_LAUNCHER:
-                                        event_queue.append(button7)
+                                        await do_press_button(button7)
                                     else:
-                                        event_queue.append(button1)
+                                        await do_press_button(button1)
                                 # RC | Default: OSK
                                 elif button_on == 103 and event_queue == []:
-                                    event_queue.append(button4)
+                                    await do_press_button(button4)
                                 # AYA Space | Default: MODE
                                 elif button_on == 104 and event_queue == []:
-                                    event_queue.append(button5)
+                                    await do_press_button(button5)
                             elif active == [] and seed_event.code in [97, 125] and button_on == 0 and event_queue != []:
                                 if button7 in event_queue:
                                     event_queue.remove(button7)
@@ -722,9 +736,14 @@ async def capture_keyboard_events():
 
                             # Small button | Default: QAM
                             if active == [32, 125] and button_on == 1 and button2 not in event_queue:
-                                event_queue.append(button2)
+                                await do_press_button(button2)
                             elif active == [] and seed_event.code in [32, 125] and button_on == 0 and button2 in event_queue:
                                 this_button = button2
+
+                            # Unpress single button
+                            if active == [] and button_on == 0 and event_queue != []:
+                                if this_button is not None and len(this_button) == 1:
+                                    await do_unpress_button(this_button)
 
                             # Small Button + big button | Default: Toggle Gyro
                             if active == [32, 97, 125] and button_on == 1 and button3 not in event_queue:
