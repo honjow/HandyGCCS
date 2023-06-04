@@ -189,6 +189,7 @@ def id_system():
     elif system_id in (
         "AYANEO 2",
         "GEEK",
+        "AYANEO 2S",
         ):
         CAPTURE_CONTROLLER = True
         CAPTURE_KEYBOARD = True
@@ -402,6 +403,7 @@ def get_controller():
             'usb-0000:e3:00.3-4/input0',
             'usb-0000:e4:00.3-4/input0',
             'usb-0000:64:00.3-3/input0', # AIR Plus
+            'usb-0000:c4:00.3-4/input0', # AYANEO 2S
             )
 
     # Grab the built-in devices. This will give us exclusive acces to the devices and their capabilities.
