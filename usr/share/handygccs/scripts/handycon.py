@@ -740,7 +740,7 @@ async def capture_keyboard_events():
                                 # LC | Default: Screenshot / Launch Chimera
                                 if button_on == 102 and event_queue == []:
                                     if LC_POWER:
-                                        toggle_suspend_to_hibernate(False)
+                                        await toggle_suspend_to_hibernate(False)
                                         is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
                                         if not is_deckui:
                                             os.system('systemctl suspend')
@@ -1159,7 +1159,7 @@ async def capture_power_events():
                             else:
                                 # For DeckUI Sessions
                                 logger.info("Suspending...")
-                                toggle_suspend_to_hibernate(True)
+                                await toggle_suspend_to_hibernate(True)
                                 is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
                                 if not is_deckui:
                                     # For BPM and Desktop sessions
@@ -1177,7 +1177,7 @@ async def capture_power_events():
             await asyncio.sleep(DETECT_DELAY)
 
 
-def toggle_suspend_to_hibernate(enable: bool):
+async def toggle_suspend_to_hibernate(enable: bool):
     filename = "/etc/systemd/sleep.conf.d/sleep.conf"
     prefixes = ["SuspendMode=", "SuspendState="]
 
