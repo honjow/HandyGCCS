@@ -211,18 +211,6 @@ def id_system():
         #GYRO_I2C_BUS = 1
         system_type = "AYA_GEN3"
 
-    elif system_id in (
-        "AIR Plus",
-        ):
-        CAPTURE_CONTROLLER = True
-        CAPTURE_KEYBOARD = True
-        CAPTURE_POWER = True
-        BUTTON_DELAY = 0.09
-        # GYRO_I2C_ADDR = 0x68
-        # GYRO_I2C_BUS = 1
-        system_type = "AYA_GEN4"
-
-
     ## ONEXPLAYER and AOKZOE devices.
     # Original BIOS have incomplete DMI data and all models report as
     # "ONE XPLAYER". OXP have provided new DMI data via BIOS updates.
@@ -724,7 +712,7 @@ async def capture_keyboard_events():
 
                         case "AYA_GEN3":
                             # This device class uses the same active events with different values for AYA SPACE, LC, and RC.
-                            if active == [97, 125] or active == [29,125]:
+                            if active == [97, 125] or active == [29, 125]:
 
                                 # LC | Default: Screenshot / Launch Chimera
                                 if button_on == 102 and event_queue == []:
@@ -738,7 +726,7 @@ async def capture_keyboard_events():
                                 # AYA Space | Default: MODE
                                 elif button_on == 104 and event_queue == []:
                                     await do_press_button(button5)
-                            elif active == [] and seed_event.code in [97, 125] and button_on == 0 and event_queue != []:
+                            elif active == [] and (seed_event.code in [97, 125] or seed_event.code in [29, 125]) and button_on == 0 and event_queue != []:
                                 if button7 in event_queue:
                                     event_queue.remove(button7)
                                     launch_chimera()
@@ -761,11 +749,11 @@ async def capture_keyboard_events():
                                     await do_unpress_button(this_button)
 
                             # Small Button + big button | Default: Toggle Gyro
-                            if active == [32, 97, 125] and button_on == 1 and button3 not in event_queue:
+                            if (active == [32, 97, 125] or active == [32, 29, 125]) and button_on == 1 and button3 not in event_queue:
                                 if button2 in event_queue:
                                     event_queue.remove(button2)
                                 event_queue.append(button3)
-                            elif active == [] and seed_event.code in [32, 97, 125] and button_on == 0 and button3 in event_queue:
+                            elif active == [] and (seed_event.code in [32, 97, 125] or seed_event.code in [32, 29, 125]) and button_on == 0 and button3 in event_queue:
                                 event_queue.remove(button3)
                                 gyro_enabled = not gyro_enabled
                                 if gyro_enabled:
@@ -773,59 +761,7 @@ async def capture_keyboard_events():
                                 else:
                                     await do_rumble(0, 100, 1000, 0)
                                     await asyncio.sleep(FF_DELAY)
-                                    await do_rumble(0, 100, 1000, 0)
-
-                        case "AYA_GEN4":
-                            if active == [29, 125]:
-                
-                                # LC | Default: Screenshot / Launch Chimera
-                                if button_on == 102 and event_queue == []:
-                                    if HAS_CHIMERA_LAUNCHER:
-                                        await do_press_button(button7)
-                                    else:
-                                        await do_press_button(button1)
-                                # RC | Default: OSK
-                                elif button_on == 103 and event_queue == []:
-                                    await do_press_button(button4)
-                                # AYA Space | Default: MODE
-                                elif button_on == 104 and event_queue == []:
-                                    await do_press_button(button5)
-                            elif active == [] and seed_event.code in [29, 125] and button_on == 0 and event_queue != []:
-                                if button7 in event_queue:
-                                    event_queue.remove(button7)
-                                    launch_chimera()
-                                if button1 in event_queue:
-                                    this_button = button1
-                                if button4 in event_queue:
-                                    this_button = button4
-                                if button5 in event_queue:
-                                    this_button = button5
-
-                            # Small button | Default: QAM
-                            if active == [32, 125] and button_on == 1 and button2 not in event_queue:
-                                await do_press_button(button2)
-                            elif active == [] and seed_event.code in [32, 125] and button_on == 0 and button2 in event_queue:
-                                this_button = button2
-
-                            # Unpress single button
-                            if active == [] and button_on == 0 and event_queue != []:
-                                if this_button is not None and len(this_button) == 1:
-                                    await do_unpress_button(this_button)
-
-                            # Small Button + big button | Default: Toggle Gyro
-                            # if active == [32, 29, 125] and button_on == 1 and button3 not in event_queue:
-                            #     if button2 in event_queue:
-                            #         event_queue.remove(button2)
-                            #     event_queue.append(button3)
-                            # elif active == [] and seed_event.code in [32, 29, 125] and button_on == 0 and button3 in event_queue:
-                            #     event_queue.remove(button3)
-                            #     gyro_enabled = not gyro_enabled
-                            #     if gyro_enabled:
-                            #         await do_rumble(0, 250, 1000, 0)
-                            #     else:
-                            #         await do_rumble(0, 100, 1000, 0)
-                            #         await asyncio.sleep(FF_DELAY)
-                            #         await do_rumble(0, 100, 1000, 0)                                    
+                                    await do_rumble(0, 100, 1000, 0)                               
 
                         case "OXP_GEN1" | "OXP_GEN2":
                             # BUTTON 1 (Possible dangerous fan activity!) Short press orange + |||||
