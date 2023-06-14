@@ -18,7 +18,7 @@ import sys
 import warnings
 import platform
 
-from constants import CONTROLLER_EVENTS, DETECT_DELAY, EVENT_ALT_TAB, EVENT_ESC, EVENT_MODE, EVENT_KILL, EVENT_OSK, EVENT_QAM, EVENT_SCR, FF_DELAY, HIDE_PATH, JOY_MAX, JOY_MIN
+from constants import CONTROLLER_EVENTS, DETECT_DELAY, EVENT_ALT_TAB, EVENT_ESC, EVENT_MODE, EVENT_KILL, EVENT_OSK, EVENT_OSK_DE, EVENT_QAM, EVENT_SCR, FF_DELAY, HIDE_PATH, JOY_MAX, JOY_MIN
 from evdev import InputDevice, InputEvent, UInput, ecodes as e, list_devices, ff
 from pathlib import Path
 from shutil import move
@@ -57,6 +57,7 @@ EVENT_MAP= {
         "HOME": EVENT_MODE,
         "KILL": EVENT_KILL,
         "OSK": EVENT_OSK,
+        "OSK_DE": EVENT_OSK_DE,
         "QAM": EVENT_QAM,
         "SCR": EVENT_SCR,
     }
@@ -192,6 +193,7 @@ def id_system():
     elif system_id in (
         "AYANEO 2",
         "GEEK",
+        "AYANEO 2S",
         ):
         CAPTURE_CONTROLLER = True
         CAPTURE_KEYBOARD = True
@@ -200,7 +202,8 @@ def id_system():
         GYRO_I2C_ADDR = 0x68
         GYRO_I2C_BUS = 1
         system_type = "AYA_GEN3"
-
+        
+    # I'm separating the Air Plus for now because the Gyro stalls the system.
     elif system_id in (
         "AIR Plus",
         ):
@@ -208,10 +211,9 @@ def id_system():
         CAPTURE_KEYBOARD = True
         CAPTURE_POWER = True
         BUTTON_DELAY = 0.09
-        # GYRO_I2C_ADDR = 0x68
-        # GYRO_I2C_BUS = 1
+        #GYRO_I2C_ADDR = 0x68
+        #GYRO_I2C_BUS = 1
         system_type = "AYA_GEN3"
-
 
     ## ONEXPLAYER and AOKZOE devices.
     # Original BIOS have incomplete DMI data and all models report as
@@ -351,7 +353,7 @@ def make_controller():
     #         product=0x028e,
     #         version=0x110
     #         )
-    
+
     # Xbox One S Controller
     ui_device = UInput(
             CONTROLLER_EVENTS,
@@ -408,11 +410,13 @@ def get_controller():
             'usb-0000:02:00.3-5/input0',
             'usb-0000:03:00.3-4/input0',
             'usb-0000:04:00.3-4/input0',
+            'usb-0000:64:00.3-3/input0',
             'usb-0000:73:00.3-4/input0',
             'usb-0000:74:00.3-3/input0',
             'usb-0000:e3:00.3-4/input0',
             'usb-0000:e4:00.3-4/input0',
             'usb-0000:64:00.3-3/input0', # AIR Plus
+            'usb-0000:c4:00.3-4/input0', # AYANEO 2S
             )
 
     # Grab the built-in devices. This will give us exclusive acces to the devices and their capabilities.
@@ -684,7 +688,7 @@ async def capture_keyboard_events():
                                 elif HAS_CHIMERA_LAUNCHER:
                                     event_queue.append(button7)
                                 else:
-                                    event_queue.append(button1)
+                                    do_press_button(button1)
                             elif active == [] and seed_event.code in [87, 97, 125] and button_on == 0 and button1 in event_queue:
                                 this_button = button1
                             elif active == [] and seed_event.code in [87, 97, 125] and button_on == 0 and button7 in event_queue:
@@ -693,14 +697,14 @@ async def capture_keyboard_events():
 
                             # BUTTON 2 (Default: QAM) Small button
                             if active in [[40, 133], [32, 125]] and button_on == 1 and button2 not in event_queue:
-                                event_queue.append(button2)
+                                do_press_button(button2)
                             elif active == [] and seed_event.code in [32, 40, 125, 133] and button_on == 0 and button2 in event_queue:
                                 this_button = button2
                                 await do_rumble(0, 150, 1000, 0)
 
                             # BUTTON 3 (Default: Toggle Gyro) RC + LC Buttons
                             if active == [68, 87, 97, 125] and button_on == 1 and button3 not in event_queue and gyro_device:
-                                event_queue.append(button3)
+                                do_press_button(button3)
                                 if button1 in event_queue:
                                     event_queue.remove(button1)
                                 if button4 in event_queue:
@@ -718,19 +722,19 @@ async def capture_keyboard_events():
 
                             # BUTTON 4 (Default: OSK) RC Button
                             if active == [68, 97, 125] and button_on == 1 and button4 not in event_queue:
-                                event_queue.append(button4)
+                                do_press_button(button4)
                             elif active == [] and seed_event.code in [68, 97, 125] and button_on == 0 and button4 in event_queue:
                                 this_button = button4
 
                             # BUTTON 5 (Default: MODE) Big button
                             if active in [[96, 105, 133], [88, 97, 125]] and button_on == 1 and button5 not in event_queue:
-                                event_queue.append(button5)
+                                do_press_button(button5)
                             elif active == [] and seed_event.code in [88, 96, 97, 105, 125, 133] and button_on == 0 and button5 in event_queue:
                                 this_button = button5
 
                             # BUTTON 6 (Default: Toggle RyzenAdj) Big button + Small Button
                             if active == [32, 88, 97, 125] and button_on == 1 and button6 not in event_queue:
-                                event_queue.append(button6)
+                                do_press_button(button6)
                             elif active == [] and seed_event.code in [32, 88, 97, 125] and button_on == 0 and button6 in event_queue:
                                 event_queue.remove(button6)
                                 await toggle_performance()
@@ -738,6 +742,11 @@ async def capture_keyboard_events():
                             # Handle L_META from power button
                             elif active == [] and seed_event.code == 125 and button_on == 0 and  event_queue == [] and shutdown == True:
                                 shutdown = False
+
+                            # Unpress single button
+                            if active == [] and button_on == 0 and event_queue != []:
+                                if this_button is not None and len(this_button) == 1:
+                                    await do_unpress_button(this_button)
 
                         case "AYA_GEN3":
                             # This device class uses the same active events with different values for AYA SPACE, LC, and RC.
@@ -795,6 +804,7 @@ async def capture_keyboard_events():
                                     await do_rumble(0, 100, 1000, 0)
                                     await asyncio.sleep(FF_DELAY)
                                     await do_rumble(0, 100, 1000, 0)
+
 
                         case "OXP_GEN1" | "OXP_GEN2":
                             # BUTTON 1 (Possible dangerous fan activity!) Short press orange + |||||
