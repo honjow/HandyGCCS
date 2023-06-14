@@ -63,10 +63,11 @@ EVENT_MAP= {
 
 HIDE_PATH = Path(HIDE_PATH)
 
-CHIMERA_LAUNCHER_PATH='/usr/share/chimera/bin/chimera-web-launcher'
-HAS_CHIMERA_LAUNCHER=os.path.isfile(CHIMERA_LAUNCHER_PATH)
+CHIMERA_LAUNCHER_PATH = '/usr/share/chimera/bin/chimera-web-launcher'
+HAS_CHIMERA_LAUNCHER = os.path.isfile(CHIMERA_LAUNCHER_PATH)
 
-LC_POWER=True
+AYA_LC_SUSPEND_PATH = '/usr/share/handygccs/aya-lc-suspend'
+AYA_LC_SUSPEND = os.path.isfile(AYA_LC_SUSPEND_PATH)
 
 server_address = '/tmp/ryzenadj_socket'
 
@@ -675,7 +676,12 @@ async def capture_keyboard_events():
                         case "AYA_GEN2":
                             # BUTTON 1 (Default: Screenshot/Launch Chiumera) LC Button
                             if active == [87, 97, 125] and button_on == 1 and button1 not in event_queue and shutdown == False:
-                                if HAS_CHIMERA_LAUNCHER:
+                                if AYA_LC_SUSPEND:
+                                    await toggle_suspend_to_hibernate(False)
+                                    is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
+                                    if not is_deckui:
+                                        os.system('systemctl suspend')
+                                elif HAS_CHIMERA_LAUNCHER:
                                     event_queue.append(button7)
                                 else:
                                     event_queue.append(button1)
@@ -739,7 +745,7 @@ async def capture_keyboard_events():
 
                                 # LC | Default: Screenshot / Launch Chimera
                                 if button_on == 102 and event_queue == []:
-                                    if LC_POWER:
+                                    if AYA_LC_SUSPEND:
                                         await toggle_suspend_to_hibernate(False)
                                         is_deckui = steam_ifrunning_deckui("steam://shortpowerpress")
                                         if not is_deckui:
