@@ -354,7 +354,6 @@ async def capture_controller_events():
                     # 桌面模式下，按下左摇杆和右摇杆，模拟按下ESC键
                     if active_keys == [317, 318] and button_on == 1 and button3 not in handycon.event_queue:
                         is_deckui = handycon.steam_ifrunning_deckui("")
-                        handycon.logger.info("is_deckui: %s", is_deckui)
                         if not is_deckui:
                             handycon.logger.info("not in deckui mode")
                             handycon.logger.info("桌面模式下, 按下左摇杆和右摇杆, 模拟按下ESC键")
