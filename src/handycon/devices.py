@@ -358,11 +358,14 @@ async def capture_controller_events():
                         if not is_deckui:
                             handycon.logger.info("not in deckui mode")
                             handycon.logger.info("桌面模式下, 按下左摇杆和右摇杆, 模拟按下ESC键")
-                            await handycon.handle_key_down(event, button3)
                             this_button = button3
+                            await handycon.handle_key_down(event, button3)
                     elif active_keys == [] and event.code in [317, 318] and button_on == 0 and button3 in handycon.event_queue:
                         if this_button == button3:
                             await handycon.handle_key_up(event, button3)
+                    
+                    if handycon.last_button:
+                        await handycon.handle_key_up(event, handycon.last_button)
 
                     # Output the event.
                     emit_event(event)
