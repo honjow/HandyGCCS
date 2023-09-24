@@ -349,6 +349,7 @@ async def capture_controller_events():
 
                     active_keys = handycon.controller_device.active_keys()
                     button_on = event.value
+                    this_button = None
                     button3 = handycon.button_map["button3"]  # Default ESC
 
                     # 桌面模式下，按下左摇杆和右摇杆，模拟按下ESC键
@@ -358,8 +359,10 @@ async def capture_controller_events():
                             handycon.logger.info("not in deckui mode")
                             handycon.logger.info("桌面模式下, 按下左摇杆和右摇杆, 模拟按下ESC键")
                             await handycon.handle_key_down(event, button3)
+                            this_button = button3
                     elif active_keys == [] and event.code in [317, 318] and button_on == 0 and button3 in handycon.event_queue:
-                        await handycon.handle_key_up(event, button3)
+                        if this_button == button3:
+                            await handycon.handle_key_up(event, button3)
 
                     # Output the event.
                     emit_event(event)
