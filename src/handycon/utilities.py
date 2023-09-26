@@ -353,12 +353,12 @@ def steam_ifrunning_deckui(cmd):
 
 def launch_chimera():
     global handycon
-
     if not handycon.HAS_CHIMERA_LAUNCHER:
         return
     subprocess.run([ "su", handycon.USER, "-c", CHIMERA_LAUNCHER_PATH ])
 
 def special_suspend():
+    handycon.logger.info("Special suspend requested.")
     overwite_sleep_conf(True)
     # For DeckUI Sessions
     is_deckui = handycon.steam_ifrunning_deckui("steam://shortpowerpress")
@@ -368,10 +368,9 @@ def special_suspend():
         os.system('systemctl suspend')
 
 def overwite_sleep_conf(enable: bool):
-    filename = "/etc/systemd/sleep.conf.d/00-sleep.conf"
+    filename = "/etc/systemd/sleep.conf.d/zz-sleep.conf"
 
-    connect = '''
-[Sleep]
+    connect = '''[Sleep]
 '''
 
     if enable:
@@ -386,7 +385,7 @@ def overwite_sleep_conf(enable: bool):
 
 def enable_special_suspend():
     filepath = "/etc/handygccs/special_suspend"
-    return os.isfile(filepath)
+    return os.path.isfile(filepath)
 
 
 def is_process_running(name) -> bool:
