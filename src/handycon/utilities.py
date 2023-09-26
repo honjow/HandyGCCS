@@ -270,6 +270,7 @@ def map_config():
     "button10": EVENT_MAP[handycon.config["Button Map"]["button10"]],
     "button11": EVENT_MAP[handycon.config["Button Map"]["button11"]],
     "button12": EVENT_MAP[handycon.config["Button Map"]["button12"]],
+    "button13": EVENT_MAP[handycon.config["Button Map"]["button13"]],
     }
     handycon.power_action = POWER_ACTION_MAP[handycon.config["Button Map"]["power_button"]][0]
 
