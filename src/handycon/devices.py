@@ -28,6 +28,7 @@ import handycon.handhelds.oxp_gen1 as oxp_gen1
 import handycon.handhelds.oxp_gen2 as oxp_gen2
 import handycon.handhelds.oxp_gen3 as oxp_gen3
 import handycon.handhelds.oxp_gen4 as oxp_gen4
+from handycon.handycon import HandheldController
 from .constants import *
 
 ## Partial imports
@@ -38,7 +39,7 @@ from time import sleep
 
 handycon = None
 
-def set_handycon(handheld_controller):
+def set_handycon(handheld_controller: HandheldController):
     global handycon
     handycon = handheld_controller
 
@@ -421,6 +422,7 @@ def handle_power_action():
     handycon.logger.debug(f"Power Action: {handycon.power_action}")
     match handycon.power_action:
         case "Suspend":
+            handycon.restore_sleep_conf()
             # For DeckUI Sessions
             is_deckui = handycon.steam_ifrunning_deckui("steam://shortpowerpress")
 
@@ -560,6 +562,9 @@ async def emit_now(seed_event, event_list, value):
             case "Open Chimera":
                 handycon.logger.debug("Open Chimera")
                 handycon.launch_chimera()
+            case "Special Suspend":
+                handycon.logger.debug("Special Suspend")
+                handycon.special_suspend()
             case "Toggle Gyro":
                 handycon.logger.debug("Toggle Gyro is not currently enabled")
             case "Toggle Mouse Mode":

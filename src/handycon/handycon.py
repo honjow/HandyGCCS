@@ -132,6 +132,15 @@ class HandheldController:
     def launch_chimera(self):
         utilities.launch_chimera()
 
+    def enable_special_suspend(self):
+        utilities.enable_special_suspend()
+
+    def special_suspend(self):
+        utilities.special_suspend()
+
+    def restore_sleep_conf(self):
+        utilities.overwite_sleep_conf(False)
+
     def emit_event(self, event):
         devices.emit_event(event)
 

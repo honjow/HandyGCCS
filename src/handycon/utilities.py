@@ -290,6 +290,7 @@ def set_default_config():
             "button10": "ALT_TAB",
             "button11": "KILL",
             "button12": "TOGGLE_GYRO",
+            "button13": "SPECIAL_SUSPEND",
             "power_button": "SUSPEND",
             }
 
@@ -355,6 +356,36 @@ def launch_chimera():
     if not handycon.HAS_CHIMERA_LAUNCHER:
         return
     subprocess.run([ "su", handycon.USER, "-c", CHIMERA_LAUNCHER_PATH ])
+
+def special_suspend():
+    overwite_sleep_conf(True)
+    # For DeckUI Sessions
+    is_deckui = handycon.steam_ifrunning_deckui("steam://shortpowerpress")
+
+    # For BPM and Desktop sessions
+    if not is_deckui:
+        os.system('systemctl suspend')
+
+def overwite_sleep_conf(enable: bool):
+    filename = "/etc/systemd/sleep.conf.d/00-sleep.conf"
+
+    connect = '''
+[Sleep]
+'''
+
+    if enable:
+        # oput and overwrite file
+        with open(filename, "w") as f:
+            f.write(connect)
+    else:
+        # delete file
+        os.remove(filename)
+
+    os.system("systemctl kill -s HUP systemd-logind")
+
+def enable_special_suspend():
+    filepath = "/etc/handygccs/special_suspend"
+    return os.isfile(filepath)
 
 
 def is_process_running(name) -> bool:

@@ -41,6 +41,7 @@ async def process_event(seed_event, active_keys):
     button10 = handycon.button_map["button10"] 
     button11 = handycon.button_map["button11"] 
     button12 = handycon.button_map["button12"] 
+    button13 = handycon.button_map["button13"]
 
     ## Loop variables
     button_on = seed_event.value
@@ -106,10 +107,14 @@ async def process_event(seed_event, active_keys):
 
     # BUTTON 9 (Default: Toggle Mouse) Paddle + D-Pad DOWN
     # This event triggers from KEYBOARD_2.
-    if active_keys == [1, 29, 42] and button_on == 1 and button9 not in handycon.event_queue:
-        handycon.event_queue.append(button9)
-    elif active_keys == [] and seed_event.code in [1, 29, 42, 185] and button_on == 0 and button9 in handycon.event_queue:
-        this_button = button9
+    
+    action_button = button9
+    if handycon.enable_temp_suspend:
+        action_button = button13
+    if active_keys == [1, 29, 42] and button_on == 1 and action_button not in handycon.event_queue:
+        handycon.event_queue.append(action_button)
+    elif active_keys == [] and seed_event.code in [1, 29, 42, 185] and button_on == 0 and action_button in handycon.event_queue:
+        this_button = action_button
 
     # BUTTON 10 (Default: ALT+TAB) Paddle + D-Pad LEFT
     # This event triggers from KEYBOARD_2.
