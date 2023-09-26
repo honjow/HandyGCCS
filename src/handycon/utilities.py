@@ -32,14 +32,13 @@ import handycon.handhelds.oxp_gen1 as oxp_gen1
 import handycon.handhelds.oxp_gen2 as oxp_gen2
 import handycon.handhelds.oxp_gen3 as oxp_gen3
 import handycon.handhelds.oxp_gen4 as oxp_gen4
-from .handycon import HandheldController
 from .constants import *
 
 ## Partial imports
 from time import sleep
 
 handycon = None
-def set_handycon(handheld_controller:HandheldController):
+def set_handycon(handheld_controller):
     global handycon
     handycon = handheld_controller
 
