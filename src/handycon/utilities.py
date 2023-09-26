@@ -266,6 +266,7 @@ def get_config():
         need_rewrite = False
         for key in default_config_map.keys():
             if not key in handycon.config["Button Map"]:
+                handycon.logger.info(f"Adding new key to config: {key}")
                 # add new key to config
                 handycon.config["Button Map"][key] = default_config_map[key]
                 need_rewrite = True
