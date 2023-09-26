@@ -109,7 +109,7 @@ async def process_event(seed_event, active_keys):
     # This event triggers from KEYBOARD_2.
     
     action_button = button9
-    if handycon.enable_temp_suspend:
+    if handycon.enable_special_suspend:
         action_button = button13
     if active_keys == [1, 29, 42] and button_on == 1 and action_button not in handycon.event_queue:
         handycon.event_queue.append(action_button)
