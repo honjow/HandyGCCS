@@ -368,19 +368,17 @@ def special_suspend():
         os.system('systemctl suspend')
 
 def overwite_sleep_conf(enable: bool):
-    filename = "/etc/systemd/sleep.conf.d/zz-sleep.conf"
-
-    connect = '''[Sleep]
-'''
+    filename = "/etc/systemd/sleep.conf.d/sleep.conf"
+    bak_filename = "/etc/systemd/sleep.conf.bak"
 
     if enable:
-        # oput and overwrite file
-        with open(filename, "w") as f:
-            f.write(connect)
+        # move file to bak
+        if os.path.isfile(filename):
+            os.rename(filename, bak_filename)
     else:
-        # delete file
-        os.remove(filename)
-
+        # move bak to file
+        if os.path.isfile(bak_filename):
+            os.rename(bak_filename, filename)
     os.system("systemctl kill -s HUP systemd-logind")
 
 def enable_special_suspend():

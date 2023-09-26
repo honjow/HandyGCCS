@@ -132,8 +132,8 @@ class HandheldController:
     def launch_chimera(self):
         utilities.launch_chimera()
 
-    def enable_special_suspend(self):
-        utilities.enable_special_suspend()
+    def enable_special_suspend(self: bool):
+        return utilities.enable_special_suspend()
 
     def special_suspend(self):
         utilities.special_suspend()
