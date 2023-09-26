@@ -1,5 +1,5 @@
 #!/bin/bash
-./remove.sh
+# ./remove.sh
 python -m build --wheel --no-isolation
 sudo python -m installer dist/*.whl
 sudo cp -r usr/ /

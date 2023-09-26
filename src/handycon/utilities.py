@@ -32,16 +32,34 @@ import handycon.handhelds.oxp_gen1 as oxp_gen1
 import handycon.handhelds.oxp_gen2 as oxp_gen2
 import handycon.handhelds.oxp_gen3 as oxp_gen3
 import handycon.handhelds.oxp_gen4 as oxp_gen4
+from handycon.handycon import HandheldController
 from .constants import *
 
 ## Partial imports
 from time import sleep
 
 handycon = None
-def set_handycon(handheld_controller):
+def set_handycon(handheld_controller:HandheldController):
     global handycon
     handycon = handheld_controller
 
+
+default_config_map = {
+            "button1": "SCR",
+            "button2": "QAM",
+            "button3": "ESC",
+            "button4": "OSK",
+            "button5": "MODE",
+            "button6": "OPEN_CHIMERA",
+            "button7": "TOGGLE_PERFORMANCE",
+            "button8": "MODE",
+            "button9": "TOGGLE_MOUSE",
+            "button10": "ALT_TAB",
+            "button11": "KILL",
+            "button12": "TOGGLE_GYRO",
+            "button13": "SPECIAL_SUSPEND",
+            "power_button": "SUSPEND",
+            }
 
 # Capture the username and home path of the user who has been logged in the longest.
 def get_user():
@@ -244,9 +262,20 @@ def get_config():
     if os.path.exists(CONFIG_PATH):
         handycon.logger.info(f"Loading existing config: {CONFIG_PATH}")
         handycon.config.read(CONFIG_PATH)
-        if not "power_button" in handycon.config["Button Map"]:
-            handycon.logger.info("Config file out of date. Generating new config.")
-            set_default_config()
+
+        need_rewrite = False
+        for key in default_config_map.keys():
+            if not key in handycon.config["Button Map"]:
+                # add new key to config
+                handycon.config["Button Map"][key] = default_config_map[key]
+                need_rewrite = True
+
+        # if not "power_button" in handycon.config["Button Map"]:
+        #     handycon.logger.info("Config file out of date. Generating new config.")
+        #     set_default_config()
+        #     need_rewrite = True
+        
+        if need_rewrite:
             write_config()
     else:
         set_default_config()
@@ -278,22 +307,7 @@ def map_config():
 # Sets the default configuration.
 def set_default_config():
     global handycon
-    handycon.config["Button Map"] = {
-            "button1": "SCR",
-            "button2": "QAM",
-            "button3": "ESC",
-            "button4": "OSK",
-            "button5": "MODE",
-            "button6": "OPEN_CHIMERA",
-            "button7": "TOGGLE_PERFORMANCE",
-            "button8": "MODE",
-            "button9": "TOGGLE_MOUSE",
-            "button10": "ALT_TAB",
-            "button11": "KILL",
-            "button12": "TOGGLE_GYRO",
-            "button13": "SPECIAL_SUSPEND",
-            "power_button": "SUSPEND",
-            }
+    handycon.config["Button Map"] = default_config_map
 
 
 # Writes current config to disk.
