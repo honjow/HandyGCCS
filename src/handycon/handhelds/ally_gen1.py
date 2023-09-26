@@ -118,10 +118,15 @@ async def process_event(seed_event, active_keys):
 
     # BUTTON 10 (Default: ALT+TAB) Paddle + D-Pad LEFT
     # This event triggers from KEYBOARD_2.
-    if active_keys == [32, 125] and button_on == 1 and button10 not in handycon.event_queue:
-        handycon.event_queue.append(button10)
-    elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button10 in handycon.event_queue:
-        this_button = button10
+    # if active_keys == [32, 125] and button_on == 1 and button10 not in handycon.event_queue:
+    #     handycon.event_queue.append(button10)
+    # elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button10 in handycon.event_queue:
+    #     this_button = button10
+
+    if active_keys == [32, 125] and button_on == 1 and button1 not in handycon.event_queue:
+        handycon.event_queue.append(button1)
+    elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button1 in handycon.event_queue:
+        this_button = button1
 
     # BUTTON 11 (Default: KILL) Paddle + D-Pad RIGHT
     # This event triggers from KEYBOARD_2.

@@ -662,6 +662,6 @@ def make_controller():
             name='Handheld Controller',
             bustype=0x3,
             vendor=0x045e,
-            product=0x028e,
-            version=0x110
+            product=0x02ea,
+            version=0x301
             )
