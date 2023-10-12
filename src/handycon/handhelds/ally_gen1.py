@@ -12,15 +12,23 @@ handycon = None
 def init_handheld(handheld_controller):
     global handycon
     handycon = handheld_controller
+
+    is_old_bios_version = True
+    # bios_version example: RC71L.330
+    bios_version = handycon.bios_version()
+    bios_version = bios_version.split(".")[1]
+    # if bios_version less than 330, then we have an old bios.
+    is_old_bios_version = int(bios_version) < 330
+
     handycon.BUTTON_DELAY = 0.2
     handycon.CAPTURE_CONTROLLER = True
     handycon.CAPTURE_KEYBOARD = True
     handycon.CAPTURE_POWER = True
-    handycon.GAMEPAD_ADDRESS = 'usb-0000:0a:00.3-2/input0'
+    handycon.GAMEPAD_ADDRESS = 'usb-0000:0a:00.3-2/input0' if is_old_bios_version else 'usb-0000:09:00.3-2/input0'
     handycon.GAMEPAD_NAME = 'Microsoft X-Box 360 pad'
-    handycon.KEYBOARD_ADDRESS = 'usb-0000:0a:00.3-3/input0'
+    handycon.KEYBOARD_ADDRESS = 'usb-0000:0a:00.3-3/input0' if is_old_bios_version else 'usb-0000:09:00.3-3/input0'
     handycon.KEYBOARD_NAME = 'Asus Keyboard'
-    handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2'
+    handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2' if is_old_bios_version else 'usb-0000:09:00.3-3/input2'
     handycon.KEYBOARD_2_NAME = 'Asus Keyboard'
 
 

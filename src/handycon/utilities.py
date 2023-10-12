@@ -433,3 +433,12 @@ def is_process_running(name) -> bool:
     handycon.logger.debug(f'Process {name} is NOT running.')
     return False
 
+def bios_version():
+    # read bios version from /sys/class/dmi/id/bios_version
+    bios_version = None
+    try:
+        with open('/sys/class/dmi/id/bios_version', 'r') as f:
+            bios_version = f.readline().strip()
+    except:
+        pass
+    return bios_version

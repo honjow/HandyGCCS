@@ -144,6 +144,9 @@ class HandheldController:
     def emit_event(self, event):
         devices.emit_event(event)
 
+    def bios_version(self):
+        return utilities.bios_version()
+
     async def emit_events(self, events):
         await devices.emit_events(events)
 
