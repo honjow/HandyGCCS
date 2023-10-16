@@ -160,6 +160,8 @@ CONTROLLER_EVENTS = {
         e.BTN_WEST,
         e.BTN_TL,
         e.BTN_TR,
+        e.BTN_TL2,
+        e.BTN_TR2,
         e.BTN_SELECT,
         e.BTN_START,
         e.BTN_MODE,
