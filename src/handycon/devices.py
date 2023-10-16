@@ -669,7 +669,7 @@ def make_controller():
             CONTROLLER_EVENTS,
             name='Handheld Controller',
             bustype=0x3,
-            vendor=0x045e,
-            product=0x02ea,
-            version=0x301
+            vendor=0x054c,
+            product=0x05c4,
+            version=0x0100
             )
