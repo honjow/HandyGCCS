@@ -214,6 +214,24 @@ MOTION_EVENTS = {
         e.MSC_TIMESTAMP,
     ],
 }
+
+TOUCH_EVENTS = {
+    e.EV_ABS: [
+        (e.ABS_X, AbsInfo(0, 0, 1919, 0, 0, 0)),
+        (e.ABS_Y, AbsInfo(0, 0, 941, 0, 0, 0)),
+        (e.ABS_MT_SLOT, AbsInfo(0, 0, 1, 0, 0, 0)),
+        (e.ABS_MT_POSITION_X, AbsInfo(0, 0, 1919, 0, 0, 0)),
+        (e.ABS_MT_POSITION_Y, AbsInfo(0, 0, 941, 0, 0, 0)),
+        (e.ABS_MT_TRACKING_ID, AbsInfo(0, 0, 65535, 0, 0, 0)),
+    ],
+    e.EV_KEY: [
+        e.BTN_LEFT,
+        e.BTN_TOOL_FINGER,
+        e.BTN_TOUCH,
+        e.BTN_TOOL_DOUBLETAP,
+    ],
+}
+
 DETECT_DELAY = 0.5
 EVENT_ALT_TAB = [[e.EV_KEY, e.KEY_LEFTALT], [e.EV_KEY, e.KEY_TAB]]
 EVENT_ESC = [[e.EV_MSC, e.MSC_SCAN], [e.EV_KEY, e.KEY_ESC]]
