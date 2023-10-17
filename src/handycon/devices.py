@@ -670,6 +670,19 @@ def make_controller():
             name='V Sony Interactive Entertainment Wireless Controller',
             bustype=0x3,
             vendor=0x054c,
-            product=0x05c4,
-            version=0x8111
+            product=0x09cc, # DualShock 4
+            #product=0x0ce6, # DualSense
+            version=0x8111,
+            input_props=0x0,
+            )
+    
+    # Create the virtual motion sensors.
+    handycon.ui_motion_device = UInput(
+            MOTION_EVENTS,
+            name='V Sony Interactive Entertainment Wireless Controller Motion Sensors',
+            bustype=0x3,
+            vendor=0x054c,
+            product=0x09cc, # DualShock 4
+            version=0x8111,
+            input_props=0x3,
             )

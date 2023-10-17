@@ -168,10 +168,10 @@ CONTROLLER_EVENTS = {
         e.BTN_MODE,
         e.BTN_THUMBL,
         e.BTN_THUMBR,
-        e.BTN_LEFT,
-        e.BTN_TOOL_FINGER,
-        e.BTN_TOUCH,
-        e.BTN_TOOL_DOUBLETAP,
+        # e.BTN_LEFT,
+        # e.BTN_TOOL_FINGER,
+        # e.BTN_TOUCH,
+        # e.BTN_TOOL_DOUBLETAP,
     ],
     e.EV_ABS: [
         (e.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
@@ -199,6 +199,17 @@ CONTROLLER_EVENTS = {
         e.FF_SINE,
         e.FF_GAIN,
     ],
+}
+
+MOTION_EVENTS = {
+    e.EV_ABS: [
+        (e.ABS_X, AbsInfo(0, -32768, 32767, 16, 0, 8192)),
+        (e.ABS_Y, AbsInfo(0, -32768, 32767, 16, 0, 8192)),
+        (e.ABS_Z, AbsInfo(0, -32768, 32767, 16, 0, 8192)),
+        (e.ABS_RX, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
+        (e.ABS_RY, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
+        (e.ABS_RZ, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
+    ]
 }
 DETECT_DELAY = 0.5
 EVENT_ALT_TAB = [[e.EV_KEY, e.KEY_LEFTALT], [e.EV_KEY, e.KEY_TAB]]
