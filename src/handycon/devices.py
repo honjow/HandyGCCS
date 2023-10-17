@@ -673,7 +673,6 @@ def make_controller():
             product=0x09cc, # DualShock 4
             #product=0x0ce6, # DualSense
             version=0x8111,
-            input_props=0x0,
             )
     
     # Create the virtual motion sensors.
@@ -684,5 +683,5 @@ def make_controller():
             vendor=0x054c,
             product=0x09cc, # DualShock 4
             version=0x8111,
-            input_props=0x3,
+            input_props=[0x06],
             )

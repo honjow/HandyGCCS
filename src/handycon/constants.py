@@ -209,7 +209,10 @@ MOTION_EVENTS = {
         (e.ABS_RX, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
         (e.ABS_RY, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
         (e.ABS_RZ, AbsInfo(0, -2097152, 2097152, 16, 0, 1024)),
-    ]
+    ],
+    e.EV_MSC: [
+        e.MSC_TIMESTAMP,
+    ],
 }
 DETECT_DELAY = 0.5
 EVENT_ALT_TAB = [[e.EV_KEY, e.KEY_LEFTALT], [e.EV_KEY, e.KEY_TAB]]
