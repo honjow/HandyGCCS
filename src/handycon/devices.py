@@ -346,13 +346,6 @@ async def capture_keyboard_2_events():
 
 async def capture_controller_events():
     global handycon
-
-    XBOX_BTN_NORTH = 308
-    XBOX_BTN_WEST = 307
-
-    DS_BTN_NORTH = 307
-    DS_BTN_WEST = 308
-
     handycon.logger.debug(f"capture_controller_events, {handycon.running}")
     while handycon.running:
         if handycon.controller_device:
@@ -362,20 +355,11 @@ async def capture_controller_events():
                     if event.type in [e.EV_FF, e.EV_UINPUT]:
                         continue
 
-                    # convert xbox button to ds button
-                    if event.type == e.EV_KEY and event.code == XBOX_BTN_NORTH:
-                        event.code = DS_BTN_NORTH
-                    if event.type == e.EV_KEY and event.code == XBOX_BTN_WEST:
-                        event.code = DS_BTN_WEST
-
                     active_keys = handycon.controller_device.active_keys()
                     button_on = event.value
-                    this_button = None
-                    button3 = handycon.button_map["button3"]  # Default ESC
-
-                    handycon.logger.info(f"active_keys is {active_keys}, button_on is {button_on}")
 
                     # 桌面模式下，按下左摇杆和右摇杆，模拟按下ESC键
+                    button3 = handycon.button_map["button3"]  # Default ESC
                     if active_keys == [317, 318] and button_on == 1 and button3 not in handycon.event_queue:
                         is_deckui = handycon.steam_ifrunning_deckui("")
                         if not is_deckui:
@@ -558,8 +542,20 @@ async def emit_events(events: list):
 
 
 # Emit a single event. Skips some logic checks for optimization.
-def emit_event(event):
+def emit_event(event: InputEvent):
     global handycon
+
+    XBOX_BTN_NORTH = 308
+    XBOX_BTN_WEST = 307
+    DS_BTN_NORTH = 307
+    DS_BTN_WEST = 308
+
+    # conv xbox to ds
+    if event.code == XBOX_BTN_NORTH:
+        event.code = DS_BTN_NORTH
+    elif event.code == XBOX_BTN_WEST:
+        event.code = DS_BTN_WEST
+
     handycon.logger.debug(f"Emitting event: {event}")
     handycon.ui_device.write_event(event)
     handycon.ui_device.syn()
@@ -680,7 +676,7 @@ def make_controller():
 
     # Create the virtual controller.
     handycon.ui_device = UInput(
-            CONTROLLER_EVENTS,
+            DS4_CONTROLLER_EVENTS,
             name='V Sony Interactive Entertainment Wireless Controller',
             bustype=0x3,
             vendor=0x054c,

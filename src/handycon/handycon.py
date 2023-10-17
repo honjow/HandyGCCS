@@ -16,6 +16,8 @@ from .constants import *
 from . import devices
 from . import utilities
 
+from evdev import ecodes as e, ff, InputDevice, InputEvent, list_devices, UInput
+
 ## Partial imports
 from pathlib import Path
 
@@ -60,11 +62,13 @@ class HandheldController:
     HOME_PATH = None
 
     # UInput Devices
-    controller_device = None
+    controller_device : InputDevice = None
     keyboard_device = None
     keyboard_2_device = None
     power_device = None
     power_device_2 = None
+
+    ui_device : UInput = None
 
     # Paths
     controller_event = None

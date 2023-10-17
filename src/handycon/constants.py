@@ -8,7 +8,7 @@ from pathlib import Path
 CHIMERA_LAUNCHER_PATH = Path('/usr/share/chimera/bin/chimera-web-launcher')
 CONFIG_DIR = "/etc/handygccs/"
 CONFIG_PATH = "/etc/handygccs/handygccs.conf"
-CONTROLLER_EVENTS = {
+DS4_CONTROLLER_EVENTS = {
     e.EV_KEY: [
         e.KEY_ESC,
         e.KEY_1,
@@ -168,10 +168,6 @@ CONTROLLER_EVENTS = {
         e.BTN_MODE,
         e.BTN_THUMBL,
         e.BTN_THUMBR,
-        # e.BTN_LEFT,
-        # e.BTN_TOOL_FINGER,
-        # e.BTN_TOUCH,
-        # e.BTN_TOOL_DOUBLETAP,
     ],
     e.EV_ABS: [
         (e.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
