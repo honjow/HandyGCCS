@@ -154,6 +154,7 @@ CONTROLLER_EVENTS = {
         e.KEY_F15,
         e.KEY_SEARCH,
         e.KEY_MEDIA,
+        
         e.BTN_SOUTH,
         e.BTN_EAST,
         e.BTN_NORTH,
@@ -167,6 +168,10 @@ CONTROLLER_EVENTS = {
         e.BTN_MODE,
         e.BTN_THUMBL,
         e.BTN_THUMBR,
+        e.BTN_LEFT,
+        e.BTN_TOOL_FINGER,
+        e.BTN_TOUCH,
+        e.BTN_TOOL_DOUBLETAP,
     ],
     e.EV_ABS: [
         (e.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
