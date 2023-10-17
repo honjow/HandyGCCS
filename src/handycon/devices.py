@@ -667,9 +667,9 @@ def make_controller():
     # Create the virtual controller.
     handycon.ui_device = UInput(
             CONTROLLER_EVENTS,
-            name='Sony Interactive Entertainment Wireless Controller',
+            name='V Sony Interactive Entertainment Wireless Controller',
             bustype=0x3,
             vendor=0x054c,
             product=0x05c4,
-            version=0x0100
+            version=0x8111
             )
