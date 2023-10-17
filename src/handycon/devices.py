@@ -692,7 +692,7 @@ def make_controller():
             bustype=0x3,
             vendor=0x054c,
             product=0x09cc, # DualShock 4
-            version=0x8100,
+            version=0x8111,
             input_props=[0x06],
             )
     
