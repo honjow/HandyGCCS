@@ -13,6 +13,12 @@ def init_handheld(handheld_controller):
     global handycon
     handycon = handheld_controller
 
+    devices = []
+    proc_dev_fd = open('/proc/bus/input/devices', 'r')
+    for line in proc_dev_fd:
+        devices.append(line)
+    proc_dev_fd.close()
+
     is_old_bios_version = True
     # bios_version example: RC71L.330
     bios_version = handycon.bios_version()
@@ -24,12 +30,42 @@ def init_handheld(handheld_controller):
     handycon.CAPTURE_CONTROLLER = True
     handycon.CAPTURE_KEYBOARD = True
     handycon.CAPTURE_POWER = True
-    handycon.GAMEPAD_ADDRESS = 'usb-0000:0a:00.3-2/input0' if is_old_bios_version else 'usb-0000:09:00.3-2/input0'
+    # handycon.GAMEPAD_ADDRESS = 'usb-0000:0a:00.3-2/input0' if is_old_bios_version else 'usb-0000:09:00.3-2/input0'
     handycon.GAMEPAD_NAME = 'Microsoft X-Box 360 pad'
-    handycon.KEYBOARD_ADDRESS = 'usb-0000:0a:00.3-3/input0' if is_old_bios_version else 'usb-0000:09:00.3-3/input0'
+    # handycon.KEYBOARD_ADDRESS = 'usb-0000:0a:00.3-3/input0' if is_old_bios_version else 'usb-0000:09:00.3-3/input0'
     handycon.KEYBOARD_NAME = 'Asus Keyboard'
-    handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2' if is_old_bios_version else 'usb-0000:09:00.3-3/input2'
+    # handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2' if is_old_bios_version else 'usb-0000:09:00.3-3/input2'
     handycon.KEYBOARD_2_NAME = 'Asus Keyboard'
+
+    GAMEPAD_ADDRESS_LIST = [
+            'usb-0000:08:00.3-2/input0',
+            'usb-0000:09:00.3-2/input0',
+            'usb-0000:0a:00.3-2/input0',
+            ]
+    KEYBOARD_ADDRESS_LIST = [
+            'usb-0000:08:00.3-3/input0',
+            'usb-0000:09:00.3-3/input0',
+            'usb-0000:0a:00.3-3/input0',
+            ]
+    KEYBOARD_2_ADDRESS_LIST = [
+            'usb-0000:08:00.3-3/input2',
+            'usb-0000:09:00.3-3/input2',
+            'usb-0000:0a:00.3-3/input2',
+            ]
+    for line in devices:
+        for address in GAMEPAD_ADDRESS_LIST:
+            if address in line:
+                handycon.GAMEPAD_ADDRESS = address
+        for address in KEYBOARD_ADDRESS_LIST:
+            if address in line:
+                handycon.KEYBOARD_ADDRESS = address
+        for address in KEYBOARD_2_ADDRESS_LIST:
+            if address in line:
+                handycon.KEYBOARD_2_ADDRESS = address
+    
+    if not handycon.GAMEPAD_ADDRESS or not handycon.KEYBOARD_ADDRESS or not handycon.KEYBOARD_2_ADDRESS:
+        handycon.logger.warn("Unable to identify one or more input devices by address. Please submit a bug report with a copy of '/proc/bus/input/devices'")
+        exit()
 
 
 # Captures keyboard events and translates them to virtual device events.
@@ -59,6 +95,7 @@ async def process_event(seed_event, active_keys):
     if active_keys == [] and handycon.event_queue != []:
         this_button = handycon.event_queue[0]
 
+    # 失效
     # BUTTON 1 (Default: Screenshot) Paddle + Y
     if active_keys == [184] and button_on == 1 and button1 not in handycon.event_queue:
         handycon.event_queue.append(button1)
@@ -78,6 +115,7 @@ async def process_event(seed_event, active_keys):
     elif active_keys == [] and seed_event.code in [49, 125, 185] and button_on == 0 and button3 in handycon.event_queue:
         this_button = button3
 
+    # 失效
     # BUTTON 4 (Default: OSK) Paddle + D-Pad UP
     if active_keys == [88] and button_on == 1 and button4 not in handycon.event_queue:
         handycon.event_queue.append(button4)
@@ -90,6 +128,7 @@ async def process_event(seed_event, active_keys):
     elif active_keys == [] and seed_event.code in [186] and button_on == 0 and button5 in handycon.event_queue:
         this_button = button5
 
+    # 失效
     # BUTTON 6 (Default: Launch Chimera) Paddle + A
     if active_keys == [68] and button_on == 1 and button6 not in handycon.event_queue:
         handycon.event_queue.append(button6)
@@ -115,7 +154,6 @@ async def process_event(seed_event, active_keys):
 
     # BUTTON 9 (Default: Toggle Mouse) Paddle + D-Pad DOWN
     # This event triggers from KEYBOARD_2.
-    
     action_button = button9
     if handycon.enable_special_suspend():
         action_button = button13
@@ -136,12 +174,19 @@ async def process_event(seed_event, active_keys):
     elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button1 in handycon.event_queue:
         this_button = button1
 
-    # BUTTON 11 (Default: KILL) Paddle + D-Pad RIGHT
+    # # BUTTON 11 (Default: KILL) Paddle + D-Pad RIGHT
+    # # This event triggers from KEYBOARD_2.
+    # if active_keys == [15, 125] and button_on == 1 and button11 not in handycon.event_queue:
+    #     handycon.event_queue.append(button11)
+    # elif active_keys == [] and seed_event.code in [15, 125, 185] and button_on == 0 and button11 in handycon.event_queue:
+    #     this_button = button11
+
+    # BUTTON 4 (Default: OSK) Paddle + D-Pad RIGHT
     # This event triggers from KEYBOARD_2.
-    if active_keys == [15, 125] and button_on == 1 and button11 not in handycon.event_queue:
-        handycon.event_queue.append(button11)
-    elif active_keys == [] and seed_event.code in [15, 125, 185] and button_on == 0 and button11 in handycon.event_queue:
-        this_button = button11
+    if active_keys == [15, 125] and button_on == 1 and button4 not in handycon.event_queue:
+        handycon.event_queue.append(button4)
+    elif active_keys == [] and seed_event.code in [15, 125, 185] and button_on == 0 and button4 in handycon.event_queue:
+        this_button = button4
 
     # BUTTON 12 (Default: Toggle Gyro) Paddle + B
     # This event triggers from KEYBOARD_2.
