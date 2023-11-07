@@ -11,6 +11,12 @@ handycon = None
 
 def init_handheld(handheld_controller):
     global handycon
+    devices = []
+    proc_dev_fd = open('/proc/bus/input/devices', 'r')
+    for line in proc_dev_fd:
+        devices.append(line)
+    proc_dev_fd.close()
+
     handycon = handheld_controller
 
     devices = []
@@ -36,6 +42,36 @@ def init_handheld(handheld_controller):
     handycon.KEYBOARD_NAME = 'Asus Keyboard'
     # handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2' if is_old_bios_version else 'usb-0000:09:00.3-3/input2'
     handycon.KEYBOARD_2_NAME = 'Asus Keyboard'
+
+    GAMEPAD_ADDRESS_LIST = [
+            'usb-0000:08:00.3-2/input0',
+            'usb-0000:09:00.3-2/input0',
+            'usb-0000:0a:00.3-2/input0',
+            ]
+    KEYBOARD_ADDRESS_LIST = [
+            'usb-0000:08:00.3-3/input0',
+            'usb-0000:09:00.3-3/input0',
+            'usb-0000:0a:00.3-3/input0',
+            ]
+    KEYBOARD_2_ADDRESS_LIST = [
+            'usb-0000:08:00.3-3/input2',
+            'usb-0000:09:00.3-3/input2',
+            'usb-0000:0a:00.3-3/input2',
+            ]
+    for line in devices:
+        for address in GAMEPAD_ADDRESS_LIST:
+            if address in line:
+                handycon.GAMEPAD_ADDRESS = address
+        for address in KEYBOARD_ADDRESS_LIST:
+            if address in line:
+                handycon.KEYBOARD_ADDRESS = address
+        for address in KEYBOARD_2_ADDRESS_LIST:
+            if address in line:
+                handycon.KEYBOARD_2_ADDRESS = address
+    
+    if not handycon.GAMEPAD_ADDRESS or not handycon.KEYBOARD_ADDRESS or not handycon.KEYBOARD_2_ADDRESS:
+        handycon.logger.warn("Unable to identify one or more input devices by address. Please submit a bug report with a copy of '/proc/bus/input/devices'")
+        exit()
 
     GAMEPAD_ADDRESS_LIST = [
             'usb-0000:08:00.3-2/input0',
