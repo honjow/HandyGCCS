@@ -676,7 +676,9 @@ def make_controller():
     # Create the virtual controller.
     handycon.ui_device = UInput(
             CONTROLLER_EVENTS,
-            name='Handheld Controller',
+            # name='Handheld Controller',
+            # xbox one s controller
+            name='V Xbox Wireless Controller',
             bustype=0x3,
             vendor=0x045e,
             product=0x02ea,
