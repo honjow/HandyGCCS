@@ -133,10 +133,10 @@ async def process_event(seed_event, active_keys):
 
     # 失效
     # BUTTON 1 (Default: Screenshot) Paddle + Y
-    if active_keys == [184] and button_on == 1 and button1 not in handycon.event_queue:
-        handycon.event_queue.append(button1)
-    elif active_keys == [] and seed_event.code in [184, 185] and button_on == 0 and button1 in handycon.event_queue:
-        this_button = button1
+    # if active_keys == [184] and button_on == 1 and button1 not in handycon.event_queue:
+    #     handycon.event_queue.append(button1)
+    # elif active_keys == [] and seed_event.code in [184, 185] and button_on == 0 and button1 in handycon.event_queue:
+    #     this_button = button1
 
     # BUTTON 2 (Default: QAM) Armory Crate Button Short Press
     if active_keys == [148] and button_on == 1 and button2 not in handycon.event_queue:
@@ -146,17 +146,17 @@ async def process_event(seed_event, active_keys):
 
     # BUTTON 3 (Default: ESC) Paddle + X Temp disabled, goes nuts.
     # This event triggers from KEYBOARD_2.
-    if active_keys == [25, 125] and button_on == 1 and button3 not in handycon.event_queue:
-        handycon.event_queue.append(button3)
-    elif active_keys == [] and seed_event.code in [49, 125, 185] and button_on == 0 and button3 in handycon.event_queue:
-        this_button = button3
+    # if active_keys == [25, 125] and button_on == 1 and button3 not in handycon.event_queue:
+    #     handycon.event_queue.append(button3)
+    # elif active_keys == [] and seed_event.code in [49, 125, 184] and button_on == 0 and button3 in handycon.event_queue:
+    #     this_button = button3
 
     # 失效
     # BUTTON 4 (Default: OSK) Paddle + D-Pad UP
-    if active_keys == [88] and button_on == 1 and button4 not in handycon.event_queue:
-        handycon.event_queue.append(button4)
-    elif active_keys == [] and seed_event.code in [88, 185] and button_on == 0 and button4 in handycon.event_queue:
-        this_button = button4
+    # if active_keys == [88] and button_on == 1 and button4 not in handycon.event_queue:
+    #     handycon.event_queue.append(button4)
+    # elif active_keys == [] and seed_event.code in [88, 184] and button_on == 0 and button4 in handycon.event_queue:
+    #     this_button = button4
 
     # BUTTON 5 (Default: Mode) Control Center Short Press.
     if active_keys == [186] and button_on == 1 and button5 not in handycon.event_queue:
@@ -166,10 +166,10 @@ async def process_event(seed_event, active_keys):
 
     # 失效
     # BUTTON 6 (Default: Launch Chimera) Paddle + A
-    if active_keys == [68] and button_on == 1 and button6 not in handycon.event_queue:
-        handycon.event_queue.append(button6)
-    elif active_keys == [] and seed_event.code in [68, 185] and button_on == 0 and button6 in handycon.event_queue:
-        this_button = button6
+    # if active_keys == [68] and button_on == 1 and button6 not in handycon.event_queue:
+    #     handycon.event_queue.append(button6)
+    # elif active_keys == [] and seed_event.code in [68, 184] and button_on == 0 and button6 in handycon.event_queue:
+    #     this_button = button6
 
     # BUTTON 7 (Default: Toggle Performance) Armory Crate Button Long Press
     # This button triggers immediate down/up after holding for ~1s an F17 and then
@@ -193,9 +193,9 @@ async def process_event(seed_event, active_keys):
     action_button = button9
     if handycon.enable_special_suspend():
         action_button = button13
-    if active_keys == [1, 29, 42] and button_on == 1 and action_button not in handycon.event_queue:
+    if active_keys == [1, 29, 42, 184] and button_on == 1 and action_button not in handycon.event_queue:
         handycon.event_queue.append(action_button)
-    elif active_keys == [] and seed_event.code in [1, 29, 42, 185] and button_on == 0 and action_button in handycon.event_queue:
+    elif active_keys == [] and seed_event.code in [1, 29, 42, 184] and button_on == 0 and action_button in handycon.event_queue:
         this_button = action_button
 
     # BUTTON 10 (Default: ALT+TAB) Paddle + D-Pad LEFT
@@ -205,30 +205,31 @@ async def process_event(seed_event, active_keys):
     # elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button10 in handycon.event_queue:
     #     this_button = button10
 
-    if active_keys == [32, 125] and button_on == 1 and button1 not in handycon.event_queue:
+    # Paddle + D-Pad LEFT button1 截图
+    if active_keys == [32, 125, 184] and button_on == 1 and button1 not in handycon.event_queue:
         handycon.event_queue.append(button1)
-    elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button1 in handycon.event_queue:
+    elif active_keys == [] and seed_event.code in [32, 125, 184] and button_on == 0 and button1 in handycon.event_queue:
         this_button = button1
 
     # # BUTTON 11 (Default: KILL) Paddle + D-Pad RIGHT
     # # This event triggers from KEYBOARD_2.
     # if active_keys == [15, 125] and button_on == 1 and button11 not in handycon.event_queue:
     #     handycon.event_queue.append(button11)
-    # elif active_keys == [] and seed_event.code in [15, 125, 185] and button_on == 0 and button11 in handycon.event_queue:
+    # elif active_keys == [] and seed_event.code in [15, 125, 184] and button_on == 0 and button11 in handycon.event_queue:
     #     this_button = button11
 
     # BUTTON 4 (Default: OSK) Paddle + D-Pad RIGHT
     # This event triggers from KEYBOARD_2.
-    if active_keys == [15, 125] and button_on == 1 and button4 not in handycon.event_queue:
+    if active_keys == [15, 125, 184] and button_on == 1 and button4 not in handycon.event_queue:
         handycon.event_queue.append(button4)
-    elif active_keys == [] and seed_event.code in [15, 125, 185] and button_on == 0 and button4 in handycon.event_queue:
+    elif active_keys == [] and seed_event.code in [15, 125, 184] and button_on == 0 and button4 in handycon.event_queue:
         this_button = button4
 
     # BUTTON 12 (Default: Toggle Gyro) Paddle + B
     # This event triggers from KEYBOARD_2.
-    if active_keys == [49, 125] and button_on == 1 and button12 not in handycon.event_queue:
+    if active_keys == [49, 125, 184] and button_on == 1 and button12 not in handycon.event_queue:
         handycon.event_queue.append(button12)
-    elif active_keys == [] and seed_event.code in [25, 125, 185] and button_on == 0 and button12 in handycon.event_queue:
+    elif active_keys == [] and seed_event.code in [49, 125, 184] and button_on == 0 and button12 in handycon.event_queue:
         this_button = button12
 
     # Create list of events to fire.
@@ -242,3 +243,18 @@ async def process_event(seed_event, active_keys):
     elif handycon.last_button and not this_button:
         await handycon.emit_now(seed_event, handycon.last_button, 0)
         handycon.last_button = None
+
+
+def showButton(seed_event, active_keys):
+    button_on = seed_event.value
+    
+    handycon.logger.info("Active Keys: " + str(active_keys))
+    # seed_event.code
+    handycon.logger.info("Seed Event: " + str(seed_event.code))
+    # button_on
+    handycon.logger.info("Button On: " + str(button_on))
+    # handycon.event_queue
+    handycon.logger.info("Event Queue: " + str(handycon.event_queue))
+    # handycon.last_button
+    handycon.logger.info("Last Button: " + str(handycon.last_button))
+    handycon.logger.info("")
