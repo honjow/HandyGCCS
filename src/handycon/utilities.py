@@ -429,7 +429,7 @@ def launch_chimera():
 
 def special_suspend():
     handycon.logger.info("Special suspend requested.")
-    overwite_sleep_conf(True)
+    overwite_suspend(True)
     # For DeckUI Sessions
     is_deckui = handycon.steam_ifrunning_deckui("steam://shortpowerpress")
 
@@ -437,9 +437,9 @@ def special_suspend():
     if not is_deckui:
         os.system('systemctl suspend')
 
-def overwite_sleep_conf(enable: bool):
-    filename = "/etc/systemd/sleep.conf.d/sleep.conf"
-    bak_filename = "/etc/systemd/sleep.conf.bak"
+def overwite_suspend(enable: bool):
+    filename = "/etc/systemd/system/systemd-suspend.service"
+    bak_filename = "/etc/systemd/system/systemd-suspend.service.bak"
 
     if enable:
         # move file to bak
@@ -449,7 +449,7 @@ def overwite_sleep_conf(enable: bool):
         # move bak to file
         if os.path.isfile(bak_filename):
             os.rename(bak_filename, filename)
-    os.system("systemctl kill -s HUP systemd-logind")
+    os.system("sudo systemctl daemon-reload")
 
 def enable_special_suspend():
     filepath = "/etc/handygccs/special_suspend"

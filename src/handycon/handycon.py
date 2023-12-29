@@ -139,7 +139,7 @@ class HandheldController:
         utilities.special_suspend()
 
     def restore_sleep_conf(self):
-        utilities.overwite_sleep_conf(False)
+        utilities.overwite_suspend(False)
 
     def emit_event(self, event):
         devices.emit_event(event)
