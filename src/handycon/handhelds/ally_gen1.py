@@ -19,12 +19,6 @@ def init_handheld(handheld_controller):
 
     handycon = handheld_controller
 
-    devices = []
-    proc_dev_fd = open('/proc/bus/input/devices', 'r')
-    for line in proc_dev_fd:
-        devices.append(line)
-    proc_dev_fd.close()
-
     is_old_bios_version = True
     # bios_version example: RC71L.330
     bios_version = handycon.bios_version()
