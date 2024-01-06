@@ -121,6 +121,7 @@ def id_system():
     ## ASUS Devices
     elif system_id in (
         "ROG Ally RC71L_RC71L",
+        "ROG Ally RC71L",
         ):
         handycon.system_type = "ALY_GEN1"
         ally_gen1.init_handheld(handycon)
