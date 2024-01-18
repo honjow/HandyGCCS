@@ -2,12 +2,8 @@
 # This file is part of Handheld Game Console Controller System (HandyGCCS)
 # Copyright 2022-2023 Derek J. Clark <derekjohn.clark@gmail.com>
 
-import sys
-from evdev import InputDevice, InputEvent, UInput, ecodes as e, list_devices, ff
-
-from .. import constants as cons
-
 handycon = None
+
 
 def init_handheld(handheld_controller):
     global handycon
@@ -117,11 +113,11 @@ async def process_event(seed_event, active_keys):
     button12 = handycon.button_map["button12"] 
     button13 = handycon.button_map["button13"]
 
-    ## Loop variables
+    # Loop variables
     button_on = seed_event.value
     this_button = None
 
-    # Handle missed keys. 
+    # Handle missed keys.
     if active_keys == [] and handycon.event_queue != []:
         this_button = handycon.event_queue[0]
 
