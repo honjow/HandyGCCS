@@ -146,6 +146,7 @@ def id_system():
         "AYANEO NEXT",
         "AYANEO NEXT Pro",
         "AYANEO NEXT Advance",
+        "NEXT Lite",
     ):
         handycon.system_type = "AYA_GEN2"
         aya_gen2.init_handheld(handycon)
