@@ -63,7 +63,7 @@ default_config_map = {
             "button7": "TOGGLE_PERFORMANCE",
             "button8": "THUMBL",
             "button9": "THUMBR",
-            "button13": "SPECIAL_SUSPEND",
+            "special_suspend": "SPECIAL_SUSPEND",
             "power_button": "SUSPEND",
             }
 

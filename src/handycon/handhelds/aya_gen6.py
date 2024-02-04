@@ -29,7 +29,7 @@ async def process_event(seed_event, active_keys):
     button2 = handycon.button_map["button2"]
     button4 = handycon.button_map["button4"]
     button5 = handycon.button_map["button5"]
-    button13 = handycon.button_map["button13"]
+    special_suspend = handycon.button_map["special_suspend"]
 
     # Loop variables
     button_on = seed_event.value
@@ -46,7 +46,7 @@ async def process_event(seed_event, active_keys):
 
     action_button = button1
     if handycon.enable_special_suspend():
-        action_button = button13
+        action_button = special_suspend
     if active_keys == [97, 125, 185] and button_on == 1 and action_button not in handycon.event_queue:
         await handycon.handle_key_down(seed_event, action_button)
     elif active_keys == [] and seed_event.code in [97, 125, 185] and button_on == 0 and action_button in handycon.event_queue:
