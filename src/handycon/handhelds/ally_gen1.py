@@ -2,6 +2,8 @@
 # This file is part of Handheld Game Console Controller System (HandyGCCS)
 # Copyright 2022-2023 Derek J. Clark <derekjohn.clark@gmail.com>
 
+from time import sleep
+
 handycon = None
 
 
@@ -14,40 +16,28 @@ def init_handheld(handheld_controller):
     proc_dev_fd.close()
 
     handycon = handheld_controller
-
-    is_old_bios_version = True
-    # bios_version example: RC71L.330
-    bios_version = handycon.bios_version()
-    bios_version = bios_version.split(".")[1]
-    # if bios_version less than 330, then we have an old bios.
-    is_old_bios_version = int(bios_version) < 330
-
     handycon.BUTTON_DELAY = 0.2
     handycon.CAPTURE_CONTROLLER = True
     handycon.CAPTURE_KEYBOARD = True
     handycon.CAPTURE_POWER = True
-    # handycon.GAMEPAD_ADDRESS = 'usb-0000:0a:00.3-2/input0' if is_old_bios_version else 'usb-0000:09:00.3-2/input0'
     handycon.GAMEPAD_NAME = 'Microsoft X-Box 360 pad'
-    # handycon.KEYBOARD_ADDRESS = 'usb-0000:0a:00.3-3/input0' if is_old_bios_version else 'usb-0000:09:00.3-3/input0'
     handycon.KEYBOARD_NAME = 'Asus Keyboard'
-    # handycon.KEYBOARD_2_ADDRESS = 'usb-0000:0a:00.3-3/input2' if is_old_bios_version else 'usb-0000:09:00.3-3/input2'
     handycon.KEYBOARD_2_NAME = 'Asus Keyboard'
-
     GAMEPAD_ADDRESS_LIST = [
-            'usb-0000:08:00.3-2/input0',
-            'usb-0000:09:00.3-2/input0',
-            'usb-0000:0a:00.3-2/input0',
-            ]
+        'usb-0000:08:00.3-2/input0',
+        'usb-0000:09:00.3-2/input0',
+        'usb-0000:0a:00.3-2/input0',
+    ]
     KEYBOARD_ADDRESS_LIST = [
-            'usb-0000:08:00.3-3/input0',
-            'usb-0000:09:00.3-3/input0',
-            'usb-0000:0a:00.3-3/input0',
-            ]
+        'usb-0000:08:00.3-3/input0',
+        'usb-0000:09:00.3-3/input0',
+        'usb-0000:0a:00.3-3/input0',
+    ]
     KEYBOARD_2_ADDRESS_LIST = [
-            'usb-0000:08:00.3-3/input2',
-            'usb-0000:09:00.3-3/input2',
-            'usb-0000:0a:00.3-3/input2',
-            ]
+        'usb-0000:08:00.3-3/input2',
+        'usb-0000:09:00.3-3/input2',
+        'usb-0000:0a:00.3-3/input2',
+    ]
     for line in devices:
         for address in GAMEPAD_ADDRESS_LIST:
             if address in line:
@@ -58,60 +48,28 @@ def init_handheld(handheld_controller):
         for address in KEYBOARD_2_ADDRESS_LIST:
             if address in line:
                 handycon.KEYBOARD_2_ADDRESS = address
-    
+
     if not handycon.GAMEPAD_ADDRESS or not handycon.KEYBOARD_ADDRESS or not handycon.KEYBOARD_2_ADDRESS:
-        handycon.logger.warn("Unable to identify one or more input devices by address. Please submit a bug report with a copy of '/proc/bus/input/devices'")
+        handycon.logger.warn(
+            "Unable to identify one or more input devices by address. Please submit a bug report with a copy of '/proc/bus/input/devices'")
         exit()
 
-    GAMEPAD_ADDRESS_LIST = [
-            'usb-0000:08:00.3-2/input0',
-            'usb-0000:09:00.3-2/input0',
-            'usb-0000:0a:00.3-2/input0',
-            ]
-    KEYBOARD_ADDRESS_LIST = [
-            'usb-0000:08:00.3-3/input0',
-            'usb-0000:09:00.3-3/input0',
-            'usb-0000:0a:00.3-3/input0',
-            ]
-    KEYBOARD_2_ADDRESS_LIST = [
-            'usb-0000:08:00.3-3/input2',
-            'usb-0000:09:00.3-3/input2',
-            'usb-0000:0a:00.3-3/input2',
-            ]
-    for line in devices:
-        for address in GAMEPAD_ADDRESS_LIST:
-            if address in line:
-                handycon.GAMEPAD_ADDRESS = address
-        for address in KEYBOARD_ADDRESS_LIST:
-            if address in line:
-                handycon.KEYBOARD_ADDRESS = address
-        for address in KEYBOARD_2_ADDRESS_LIST:
-            if address in line:
-                handycon.KEYBOARD_2_ADDRESS = address
-    
-    if not handycon.GAMEPAD_ADDRESS or not handycon.KEYBOARD_ADDRESS or not handycon.KEYBOARD_2_ADDRESS:
-        handycon.logger.warn("Unable to identify one or more input devices by address. Please submit a bug report with a copy of '/proc/bus/input/devices'")
-        exit()
-
+    # asus_hid needs tiem to initialize and set the gamepad mode or everything breaks. Wait for 10s to let that happen.
+    sleep(10)
 
 # Captures keyboard events and translates them to virtual device events.
+
+
 async def process_event(seed_event, active_keys):
     global handycon
 
     # Button map shortcuts for easy reference.
-    button1 = handycon.button_map["button1"]  # Default Screenshot
-    button2 = handycon.button_map["button2"]  # Default QAM
-    button3 = handycon.button_map["button3"]  # Default ESC 
-    button4 = handycon.button_map["button4"]  # Default OSK
-    button5 = handycon.button_map["button5"]  # Default MODE
-    button6 = handycon.button_map["button6"] 
-    button7 = handycon.button_map["button7"] 
-    button8 = handycon.button_map["button8"] 
-    button9 = handycon.button_map["button9"] 
-    button10 = handycon.button_map["button10"] 
-    button11 = handycon.button_map["button11"] 
-    button12 = handycon.button_map["button12"] 
-    button13 = handycon.button_map["button13"]
+    button2 = handycon.button_map["button2"]    # Default: QAM
+    button4 = handycon.button_map["button4"]    # Default: OSK
+    button5 = handycon.button_map["button5"]    # Default: BTN_MODE
+    button7 = handycon.button_map["button7"]    # Default: Toggle Performance
+    button8 = handycon.button_map["button8"]    # Default: BTN_THUMBL
+    button9 = handycon.button_map["button9"]    # Default: BTN_THUMBR
 
     # Loop variables
     button_on = seed_event.value
@@ -121,32 +79,18 @@ async def process_event(seed_event, active_keys):
     if active_keys == [] and handycon.event_queue != []:
         this_button = handycon.event_queue[0]
 
-    # 失效
-    # BUTTON 1 (Default: Screenshot) Paddle + Y
-    # if active_keys == [184] and button_on == 1 and button1 not in handycon.event_queue:
-    #     handycon.event_queue.append(button1)
-    # elif active_keys == [] and seed_event.code in [184, 185] and button_on == 0 and button1 in handycon.event_queue:
-    #     this_button = button1
-
     # BUTTON 2 (Default: QAM) Armory Crate Button Short Press
     if active_keys == [148] and button_on == 1 and button2 not in handycon.event_queue:
         handycon.event_queue.append(button2)
     elif active_keys == [] and seed_event.code in [148] and button_on == 0 and button2 in handycon.event_queue:
         this_button = button2
 
-    # BUTTON 3 (Default: ESC) Paddle + X Temp disabled, goes nuts.
-    # This event triggers from KEYBOARD_2.
-    # if active_keys == [25, 125] and button_on == 1 and button3 not in handycon.event_queue:
-    #     handycon.event_queue.append(button3)
-    # elif active_keys == [] and seed_event.code in [49, 125, 184] and button_on == 0 and button3 in handycon.event_queue:
-    #     this_button = button3
-
-    # 失效
-    # BUTTON 4 (Default: OSK) Paddle + D-Pad UP
-    # if active_keys == [88] and button_on == 1 and button4 not in handycon.event_queue:
-    #     handycon.event_queue.append(button4)
-    # elif active_keys == [] and seed_event.code in [88, 184] and button_on == 0 and button4 in handycon.event_queue:
-    #     this_button = button4
+    # BUTTON 4 (Default: OSK) Control Center Long Press.
+    if active_keys == [29, 56, 111] and button_on == 1 and button4 not in handycon.event_queue:
+        handycon.event_queue.append(button4)
+        await handycon.do_rumble(0, 150, 1000, 0)
+    elif active_keys == [] and seed_event.code in [29, 56, 111] and button_on == 0 and button4 in handycon.event_queue:
+        this_button = button4
 
     # BUTTON 5 (Default: Mode) Control Center Short Press.
     if active_keys == [186] and button_on == 1 and button5 not in handycon.event_queue:
@@ -154,73 +98,26 @@ async def process_event(seed_event, active_keys):
     elif active_keys == [] and seed_event.code in [186] and button_on == 0 and button5 in handycon.event_queue:
         this_button = button5
 
-    # 失效
-    # BUTTON 6 (Default: Launch Chimera) Paddle + A
-    # if active_keys == [68] and button_on == 1 and button6 not in handycon.event_queue:
-    #     handycon.event_queue.append(button6)
-    # elif active_keys == [] and seed_event.code in [68, 184] and button_on == 0 and button6 in handycon.event_queue:
-    #     this_button = button6
-
     # BUTTON 7 (Default: Toggle Performance) Armory Crate Button Long Press
     # This button triggers immediate down/up after holding for ~1s an F17 and then
     # released another down/up for F18 on release. We use the F18 "KEY_UP" for release.
     if active_keys == [187] and button_on == 1 and button7 not in handycon.event_queue:
-        handycon.event_queue.append(button7)
         await handycon.do_rumble(0, 150, 1000, 0)
+        await handycon.handle_key_down(seed_event, button7)
     elif active_keys == [] and seed_event.code in [188] and button_on == 0 and button7 in handycon.event_queue:
-        this_button = button7
+        await handycon.handle_key_up(seed_event, button7)
 
-    # BUTTON 8 (Default: Mode) Control Center Long Press.
-    # This event triggers from KEYBOARD_2.
-    if active_keys == [29, 56, 111] and button_on == 1 and button8 not in handycon.event_queue:
-        handycon.event_queue.append(button8)
-        await handycon.do_rumble(0, 150, 1000, 0)
-    elif active_keys == [] and seed_event.code in [29, 56, 111] and button_on == 0 and button8 in handycon.event_queue:
-        this_button = button8
+    # BUTTON 11 (Default: Happy Trigger 1) Left Paddle
+    if active_keys == [184] and button_on == 1 and button8 not in handycon.event_queue:
+        await handycon.handle_key_down(seed_event, button8)
+    elif active_keys == [] and seed_event.code in [184] and button_on == 0 and button8 in handycon.event_queue:
+        await handycon.handle_key_up(seed_event, button8)
 
-    # BUTTON 9 (Default: Toggle Mouse) Paddle + D-Pad DOWN
-    # This event triggers from KEYBOARD_2.
-    action_button = button9
-    if handycon.enable_special_suspend():
-        action_button = button13
-    if active_keys == [1, 29, 42, 184] and button_on == 1 and action_button not in handycon.event_queue:
-        handycon.event_queue.append(action_button)
-    elif active_keys == [] and seed_event.code in [1, 29, 42, 184] and button_on == 0 and action_button in handycon.event_queue:
-        this_button = action_button
-
-    # BUTTON 10 (Default: ALT+TAB) Paddle + D-Pad LEFT
-    # This event triggers from KEYBOARD_2.
-    # if active_keys == [32, 125] and button_on == 1 and button10 not in handycon.event_queue:
-    #     handycon.event_queue.append(button10)
-    # elif active_keys == [] and seed_event.code in [32, 125, 185] and button_on == 0 and button10 in handycon.event_queue:
-    #     this_button = button10
-
-    # Paddle + D-Pad LEFT button1 截图
-    if active_keys == [32, 125, 184] and button_on == 1 and button1 not in handycon.event_queue:
-        handycon.event_queue.append(button1)
-    elif active_keys == [] and seed_event.code in [32, 125, 184] and button_on == 0 and button1 in handycon.event_queue:
-        this_button = button1
-
-    # # BUTTON 11 (Default: KILL) Paddle + D-Pad RIGHT
-    # # This event triggers from KEYBOARD_2.
-    # if active_keys == [15, 125] and button_on == 1 and button11 not in handycon.event_queue:
-    #     handycon.event_queue.append(button11)
-    # elif active_keys == [] and seed_event.code in [15, 125, 184] and button_on == 0 and button11 in handycon.event_queue:
-    #     this_button = button11
-
-    # BUTTON 4 (Default: OSK) Paddle + D-Pad RIGHT
-    # This event triggers from KEYBOARD_2.
-    if active_keys == [15, 125, 184] and button_on == 1 and button4 not in handycon.event_queue:
-        handycon.event_queue.append(button4)
-    elif active_keys == [] and seed_event.code in [15, 125, 184] and button_on == 0 and button4 in handycon.event_queue:
-        this_button = button4
-
-    # BUTTON 12 (Default: Toggle Gyro) Paddle + B
-    # This event triggers from KEYBOARD_2.
-    if active_keys == [49, 125, 184] and button_on == 1 and button12 not in handycon.event_queue:
-        handycon.event_queue.append(button12)
-    elif active_keys == [] and seed_event.code in [49, 125, 184] and button_on == 0 and button12 in handycon.event_queue:
-        this_button = button12
+    # BUTTON 4 (Default: Happy Trigger 2) Right Paddle
+    if active_keys == [185] and button_on == 1 and button9 not in handycon.event_queue:
+        await handycon.handle_key_down(seed_event, button9)
+    elif active_keys == [] and seed_event.code in [185] and button_on == 0 and button9 in handycon.event_queue:
+        await handycon.handle_key_up(seed_event, button9)
 
     # Create list of events to fire.
     # Handle new button presses.
@@ -233,18 +130,3 @@ async def process_event(seed_event, active_keys):
     elif handycon.last_button and not this_button:
         await handycon.emit_now(seed_event, handycon.last_button, 0)
         handycon.last_button = None
-
-
-def showButton(seed_event, active_keys):
-    button_on = seed_event.value
-    
-    handycon.logger.info("Active Keys: " + str(active_keys))
-    # seed_event.code
-    handycon.logger.info("Seed Event: " + str(seed_event.code))
-    # button_on
-    handycon.logger.info("Button On: " + str(button_on))
-    # handycon.event_queue
-    handycon.logger.info("Event Queue: " + str(handycon.event_queue))
-    # handycon.last_button
-    handycon.logger.info("Last Button: " + str(handycon.last_button))
-    handycon.logger.info("")

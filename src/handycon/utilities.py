@@ -53,6 +53,7 @@ def set_handycon(handheld_controller):
 
 
 default_config_map = {
+            "version": "1.2",
             "button1": "SCR",
             "button2": "QAM",
             "button3": "ESC",
@@ -60,11 +61,8 @@ default_config_map = {
             "button5": "MODE",
             "button6": "OPEN_CHIMERA",
             "button7": "TOGGLE_PERFORMANCE",
-            "button8": "MODE",
-            "button9": "TOGGLE_MOUSE",
-            "button10": "ALT_TAB",
-            "button11": "KILL",
-            "button12": "TOGGLE_GYRO",
+            "button8": "THUMBL",
+            "button9": "THUMBR",
             "button13": "SPECIAL_SUSPEND",
             "power_button": "SUSPEND",
             }
@@ -134,6 +132,7 @@ def id_system():
 
     # ASUS Devices
     elif system_id in (
+        "ROG Ally RC71L",
         "ROG Ally RC71L_RC71L",
         "ROG Ally RC71L",
     ):
@@ -355,7 +354,7 @@ def get_config():
         #     set_default_config()
         #     need_rewrite = True
         
-        if need_rewrite:
+        if need_rewrite or "version" not in handycon.config or float(handycon.config["version"]) < 1.2:
             write_config()
     else:
         set_default_config()
@@ -367,19 +366,18 @@ def get_config():
 def map_config():
     # Assign config file values
     handycon.button_map = {
-    "button1": EVENT_MAP[handycon.config["Button Map"]["button1"]],
-    "button2": EVENT_MAP[handycon.config["Button Map"]["button2"]],
-    "button3": EVENT_MAP[handycon.config["Button Map"]["button3"]],
-    "button4": EVENT_MAP[handycon.config["Button Map"]["button4"]],
-    "button5": EVENT_MAP[handycon.config["Button Map"]["button5"]],
-    "button6": EVENT_MAP[handycon.config["Button Map"]["button6"]],
-    "button7": EVENT_MAP[handycon.config["Button Map"]["button7"]],
-    "button8": EVENT_MAP[handycon.config["Button Map"]["button8"]],
-    "button9": EVENT_MAP[handycon.config["Button Map"]["button9"]],
-    "button10": EVENT_MAP[handycon.config["Button Map"]["button10"]],
-    "button11": EVENT_MAP[handycon.config["Button Map"]["button11"]],
-    "button12": EVENT_MAP[handycon.config["Button Map"]["button12"]],
-    "button13": EVENT_MAP[handycon.config["Button Map"]["button13"]],
+        "button1": EVENT_MAP[handycon.config["Button Map"]["button1"]],
+        "button2": EVENT_MAP[handycon.config["Button Map"]["button2"]],
+        "button3": EVENT_MAP[handycon.config["Button Map"]["button3"]],
+        "button4": EVENT_MAP[handycon.config["Button Map"]["button4"]],
+        "button5": EVENT_MAP[handycon.config["Button Map"]["button5"]],
+        "button6": EVENT_MAP[handycon.config["Button Map"]["button6"]],
+        "button7": EVENT_MAP[handycon.config["Button Map"]["button7"]],
+        "button8": EVENT_MAP[handycon.config["Button Map"]["button8"]],
+        "button9": EVENT_MAP[handycon.config["Button Map"]["button9"]],
+        "button10": EVENT_MAP[handycon.config["Button Map"]["button10"]],
+        "button11": EVENT_MAP[handycon.config["Button Map"]["button11"]],
+        "button12": EVENT_MAP[handycon.config["Button Map"]["button12"]],
     }
     handycon.power_action = POWER_ACTION_MAP[handycon.config["Button Map"]
                                              ["power_button"]][0]
